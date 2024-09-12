@@ -1,10 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.CertificationCodeNotMatchedException;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.UserStatus;
-import com.example.demo.model.dto.UserUpdateDto;
-import com.example.demo.repository.UserEntity;
+import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.user.domain.UserStatus;
+import com.example.demo.user.domain.UserUpdate;
+import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,9 +72,9 @@ class UserServiceTest {
     }
 
 //    @Test
-//    void userCreateDto_를_이용하여_유저를_생성할_수_있다() {
+//    void userCreate_를_이용하여_유저를_생성할_수_있다() {
 //        // given
-//        UserCreateDto userCreateDto = UserCreateDto.builder()
+//        UserCreate userCreate = UserCreate.builder()
 //                .email("sylvan0212@naver.com")
 //                .address("Busan")
 //                .nickname("OR-B")
@@ -81,7 +82,7 @@ class UserServiceTest {
 //        BDDMockito.doNothing().when(mailSender).send(any(SimpleMailMessage.class));
 //
 //        // when
-//        UserEntity result = userService.create(userCreateDto);
+//        UserEntity result = userService.create(userCreate);
 //
 //        // then
 //        assertThat(result.getId()).isNotNull();
@@ -90,9 +91,9 @@ class UserServiceTest {
 //    }
 
     @Test
-    void userUpdateDto_를_이용하여_유저를_수정할_수_있다() {
+    void userUpdate_를_이용하여_유저를_수정할_수_있다() {
         // given
-        UserUpdateDto updateDto = UserUpdateDto.builder()
+        UserUpdate updateDto = UserUpdate.builder()
                 .address("Incheon")
                 .nickname("OR-I")
                 .build();
