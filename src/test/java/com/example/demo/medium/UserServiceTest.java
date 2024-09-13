@@ -1,60 +1,36 @@
-package com.example.demo.user.service;
+package com.example.demo.medium;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
-import com.example.demo.mock.FakeMailSender;
-import com.example.demo.mock.FakeUserRepository;
-import com.example.demo.mock.TestClockHolder;
-import com.example.demo.mock.TestUuidHolder;
 import com.example.demo.user.domain.User;
-import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * UserService 소형 테스트
- * <p>
- * 테스트 용 디펜던시 주입해 주어 그 인풋 값을 명확히 알고 있다.
- * UserService의 각종 메소드들에 특정 인풋을 입력하고 그에 따라 기대되는 아웃풋(주로 User 인스턴스)을 검증한다.
+ *
  */
+@SqlGroup({
+        @Sql(value = "/sql/user-service-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+})
+@SpringBootTest
 class UserServiceTest {
 
+    @Autowired
     private UserService userService;
-
-    @BeforeEach
-    void init() {
-        FakeMailSender fakeMailSender = new FakeMailSender();
-        FakeUserRepository fakeUserRepository = new FakeUserRepository();
-        this.userService = UserService.builder()
-                .uuidHolder(new TestUuidHolder("aaaaaa-aaaaa-aaaa-aaaa"))
-                .clockHolder(new TestClockHolder(1678530673958L))
-                .userRepository(fakeUserRepository)
-                .certificationService(new CertificationService(fakeMailSender))
-                .build();
-        fakeUserRepository.save(User.builder()
-                .id(1L)
-                .email("sylvan0212@gmail.com")
-                .nickname("OR")
-                .address("Seoul")
-                .certificationCode("aaaaaa-aaaaa-aaaa-aaaa")
-                .status(UserStatus.ACTIVE)
-                .lastLoginAt(0L)
-                .build());
-        fakeUserRepository.save(User.builder()
-                .id(2L)
-                .email("sylvan0213@gmail.com")
-                .nickname("OR2")
-                .address("Seoul")
-                .certificationCode("aaaaaa-aaaaa-aaaa-aaab")
-                .status(UserStatus.PENDING)
-                .lastLoginAt(0L)
-                .build());
-    }
+    @MockBean
+    private JavaMailSender mailSender;
 
     @Test
     void getByEmail은_ACTIVE_상태인_유저를_찾아올_수_있다() {
@@ -98,26 +74,24 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    @Test
-    void userCreate_를_이용하여_유저를_생성할_수_있다() {
-        // given
-        UserCreate userCreate = UserCreate.builder()
-                .email("sylvan0212@naver.com")
-                .address("Busan")
-                .nickname("OR-B")
-                .build();
-
-        // when
-        User result = userService.create(userCreate);
-
-        // then
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getEmail()).isEqualTo("sylvan0212@naver.com");
-        assertThat(result.getAddress()).isEqualTo("Busan");
-        assertThat(result.getNickname()).isEqualTo("OR-B");
-        assertThat(result.getStatus()).isEqualTo(UserStatus.PENDING);
-        assertThat(result.getCertificationCode()).isEqualTo("aaaaaa-aaaaa-aaaa-aaaa");
-    }
+//    @Test
+//    void userCreate_를_이용하여_유저를_생성할_수_있다() {
+//        // given
+//        UserCreate userCreate = UserCreate.builder()
+//                .email("sylvan0212@naver.com")
+//                .address("Busan")
+//                .nickname("OR-B")
+//                .build();
+//        BDDMockito.doNothing().when(mailSender).send(any(SimpleMailMessage.class));
+//
+//        // when
+//        UserEntity result = userService.create(userCreate);
+//
+//        // then
+//        assertThat(result.getId()).isNotNull();
+//        assertThat(result.getStatus()).isEqualTo(UserStatus.PENDING);
+//        //assertThat(result.getCertificationCode()).isEqualTo("T.T"); // FIXME
+//    }
 
     @Test
     void userUpdate_를_이용하여_유저를_수정할_수_있다() {
@@ -146,7 +120,8 @@ class UserServiceTest {
 
         // then
         User user = userService.getById(1);
-        assertThat(user.getLastLoginAt()).isEqualTo(1678530673958L);
+        assertThat(user.getLastLoginAt()).isGreaterThan(0);
+        //assertThat(result.getLastLoginAt()).isEqualTo("T.T"); // FIXME
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserUpdate;
 
 import com.example.demo.user.service.port.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * User 도메인에 대부분의 로직이 들어감으로써 서비스가 엄청 얇아졌다.
  */
-@Service
 @RequiredArgsConstructor
+@Builder
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
