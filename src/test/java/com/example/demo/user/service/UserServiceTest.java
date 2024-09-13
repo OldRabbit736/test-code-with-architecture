@@ -17,7 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * UserService 소형 테스트
+ * h2나 mockito 없이도 가능한 UserService 테스트
+ * 소형 테스트고 매우 빠르다.
+ * 자바가 아닌 다른 언어에서도 이 원리를 이용해 테스트 라이브러리 없이도 테스트할 수 있다.
+ * 기존 서비스 테스트 코드에 비해 엄청난 발전이다.
  * <p>
  * 테스트 용 디펜던시 주입해 주어 그 인풋 값을 명확히 알고 있다.
  * UserService의 각종 메소드들에 특정 인풋을 입력하고 그에 따라 기대되는 아웃풋(주로 User 인스턴스)을 검증한다.
