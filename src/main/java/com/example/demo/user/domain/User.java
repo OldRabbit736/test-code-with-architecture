@@ -1,11 +1,12 @@
 package com.example.demo.user.domain;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import com.example.demo.common.service.port.ClockHolder;
+import com.example.demo.common.service.port.UuidHolder;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Clock;
-import java.util.UUID;
 
 @Getter
 public class User {
@@ -31,13 +32,18 @@ public class User {
         this.lastLoginAt = lastLoginAt;
     }
 
-    public static User from(UserCreate userCreate) {
+    // 나: 강좌에선 UuidHolder를 User가 이렇게 직접 의존하는 것으로 나왔다...
+    // 그런데 UuidHolder는 서비스 레이어에 속한다. 그러면 User는 도메인이므로 서비스를 의존하면 안되는 것 아닌가...?
+    // 둘의 패키지가 달라 상관없나?
+    // 나 같으면 UuidHolder를 직접 받는 것 보다 String을 받는 것으로 처리할 것이다.
+    // User를 사용하는 서비스 쪽에서는 물론 UuidHolder를 의존할 것이다.
+    public static User from(UserCreate userCreate, UuidHolder uuidHolder) {
         return User.builder()
                 .email(userCreate.getEmail())
                 .nickname(userCreate.getNickname())
                 .address(userCreate.getAddress())
                 .status(UserStatus.PENDING)
-                .certificationCode(UUID.randomUUID().toString())
+                .certificationCode(uuidHolder.random())
                 .build();
     }
 
@@ -53,7 +59,8 @@ public class User {
                 .build();
     }
 
-    public User login() {
+    // 여기의 ClockHolder도 from 메서드의 UuidHolder와 마찬가지로 생각한다.
+    public User login(ClockHolder clockHolder) {
         return User.builder()
                 .id(id)
                 .email(email)
@@ -61,7 +68,7 @@ public class User {
                 .address(address)
                 .certificationCode(certificationCode)
                 .status(status)
-                .lastLoginAt(Clock.systemUTC().millis())
+                .lastLoginAt(clockHolder.millis())
                 .build();
     }
 
