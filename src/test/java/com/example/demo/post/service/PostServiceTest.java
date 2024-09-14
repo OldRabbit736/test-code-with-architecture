@@ -21,14 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class PostServiceTest {
 
-    private PostService postService;
+    private PostServiceImpl postService;
 
     @BeforeEach
     void init() {
         FakePostRepository fakePostRepository = new FakePostRepository();
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
         TestClockHolder testClockHolder = new TestClockHolder(1_679_530_673_958L);
-        this.postService = PostService.builder()
+        this.postService = PostServiceImpl.builder()
                 .postRepository(fakePostRepository)
                 .userRepository(fakeUserRepository)
                 .clockHolder(testClockHolder)
