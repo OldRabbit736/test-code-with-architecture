@@ -26,7 +26,7 @@ class UserCreateControllerTest {
 
         // when
         ResponseEntity<UserResponse> result = testContainer.userCreateController
-                .createUser(userUpdate);
+                .create(userUpdate);
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));

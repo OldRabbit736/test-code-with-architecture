@@ -36,7 +36,7 @@ public class UserController {
 
     @ResponseStatus
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable long id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable long id) {
         return ResponseEntity
                 .ok()
                 .body(UserResponse.from(userService.getById(id)));
@@ -52,6 +52,7 @@ public class UserController {
                 .build();
     }
 
+    // MyInfo 관련 핸들러는 MyInfoController에 따로 모아주는 게 책임 분산 측면에서 좋다.
     @GetMapping("/me")
     public ResponseEntity<MyProfileResponse> getMyInfo(
             @Parameter(name = "EMAIL", in = ParameterIn.HEADER)
